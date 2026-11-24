@@ -13,3 +13,11 @@ def test_test_database_is_reachable(db_session):
 def test_api_routes_use_version_prefix(client):
     response = client.get("/openapi.json")
     assert "/api/v1/test/" in response.json()["paths"]
+
+
+def test_create_test_returns_only_read_schema_fields(client):
+    response = client.post(
+        "/api/v1/test/", json={"test_name": "setup_check", "test_type": "smoke"}
+    )
+    assert response.status_code == 201
+    assert set(response.json()) == {"id", "test_name", "test_type"}
