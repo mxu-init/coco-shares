@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from app.core.config import settings
 
 
@@ -14,7 +13,8 @@ SessionLocal = sessionmaker(
     bind=engine,
 )
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
 
 # Es una dependencia de FastAPI que: abre sesión, la entrega al endpoint,
 # y cierra la sesión automáticamente.
