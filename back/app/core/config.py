@@ -12,6 +12,8 @@ class Settings (BaseSettings):
     DB_PASSWORD:str
     DRIVER_NAME:str
 
+    API_V1_PREFIX: str = "/api/v1"
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @property

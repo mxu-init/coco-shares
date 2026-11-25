@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.core.config import settings
 from sqlalchemy import text
 from app.core.database_connection import engine
-from app.api import test_routes
+from app.api.api_router import api_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -10,7 +10,7 @@ app = FastAPI(
     description=settings.APP_DESCRIPTION
 )
 
-app.include_router(test_routes.router)
+app.include_router(api_router)
 
 @app.get("/")
 async def root():
