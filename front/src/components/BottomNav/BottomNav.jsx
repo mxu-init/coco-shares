@@ -1,7 +1,7 @@
-import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material'
+import { BottomNavigation, BottomNavigationAction, Box, Paper } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
 
-function BottomNav({ navigationItems, activeItem }) {
+function BottomNav({ sectionItems, activeItem }) {
   return (
     <Paper
       component="nav"
@@ -21,13 +21,20 @@ function BottomNav({ navigationItems, activeItem }) {
         value={activeItem?.path ?? null}
         sx={{
           height: 64,
-          '& .MuiBottomNavigationAction-root': { color: 'grey.500' },
+          '& .MuiBottomNavigationAction-root': { minWidth: 0, px: 0, color: 'grey.500' },
           '& .MuiBottomNavigationAction-root.Mui-selected': { color: 'primary.main' },
+          '& .MuiBottomNavigationAction-label, & .Mui-selected .MuiBottomNavigationAction-label': {
+            typography: 'caption',
+            letterSpacing: 0,
+            mt: 0.5,
+            whiteSpace: 'nowrap',
+          },
           '& .Mui-selected .MuiBottomNavigationAction-label': { fontWeight: 600 },
         }}
       >
-        {navigationItems.map((item) => {
-          const Icon = item === activeItem ? item.activeIcon : item.icon
+        {sectionItems.map((item) => {
+          const isActive = item === activeItem
+          const Icon = isActive ? item.activeIcon : item.icon
 
           return (
             <BottomNavigationAction
@@ -36,7 +43,21 @@ function BottomNav({ navigationItems, activeItem }) {
               to={item.path}
               value={item.path}
               label={item.label}
-              icon={<Icon />}
+              aria-current={isActive ? 'page' : undefined}
+              icon={
+                <Box
+                  sx={{
+                    width: 56,
+                    height: 32,
+                    borderRadius: 999,
+                    display: 'grid',
+                    placeItems: 'center',
+                    bgcolor: isActive ? 'primary.light' : 'transparent',
+                  }}
+                >
+                  <Icon />
+                </Box>
+              }
             />
           )
         })}

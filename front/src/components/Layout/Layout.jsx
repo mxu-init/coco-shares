@@ -3,13 +3,14 @@ import { Outlet, useLocation } from 'react-router-dom'
 import BottomNav from '../BottomNav/BottomNav'
 import Footer from '../Footer/Footer'
 import Header from '../Header/Header'
-import { findActiveItem, getNavigationItems } from './navigationItems'
+import { findActiveItem, getNavigationItems, getSectionItems } from './navigationItems'
 
-function Layout({ role = null }) {
+function Layout({ user = null }) {
   const { pathname } = useLocation()
-  const navigationItems = getNavigationItems(role)
+  const navigationItems = getNavigationItems(user?.role)
+  const sectionItems = getSectionItems(user?.role)
   const activeItem = findActiveItem(navigationItems, pathname)
-  const hasBottomNav = navigationItems.length > 0
+  const hasBottomNav = sectionItems.length > 0
 
   return (
     <Box
@@ -20,12 +21,12 @@ function Layout({ role = null }) {
         pb: { xs: hasBottomNav ? 8 : 0, md: 0 },
       }}
     >
-      <Header navigationItems={navigationItems} activeItem={activeItem} />
+      <Header user={user} navigationItems={navigationItems} activeItem={activeItem} />
       <Box component="main" sx={{ flexGrow: 1 }}>
         <Outlet />
       </Box>
       <Footer />
-      {hasBottomNav && <BottomNav navigationItems={navigationItems} activeItem={activeItem} />}
+      {hasBottomNav && <BottomNav sectionItems={sectionItems} activeItem={activeItem} />}
     </Box>
   )
 }

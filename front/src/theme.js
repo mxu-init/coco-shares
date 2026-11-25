@@ -6,6 +6,7 @@ import cohispaniaIsotype from './assets/images/cohispaniaIsotype.png'
 
 const brandColors = {
   blue: '#1F2A44',
+  blueHover: '#2B3A5E',
   blueDark: '#141C30',
   blueTint: '#E9ECF3',
   orange: '#F68D2E',
@@ -53,6 +54,7 @@ const theme = createTheme({
     divider: grey[50],
     grey,
     accentText: brandColors.orangeText,
+    primaryHover: brandColors.blueHover,
   },
   typography: {
     fontFamily: '"Open Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
