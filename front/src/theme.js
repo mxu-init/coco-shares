@@ -1,25 +1,101 @@
 import { createTheme } from '@mui/material/styles'
+import cohispaniaLogo from './assets/images/cohispaniaLogo.svg'
+import cohispaniaLogoNegative from './assets/images/cohispaniaLogoNegative.svg'
+
+const brandColors = {
+  blue: '#1F2A44',
+  blueDark: '#141C30',
+  blueTint: '#E9ECF3',
+  orange: '#F68D2E',
+  orangeDark: '#E87128',
+  orangeTint: '#FEF1E5',
+  orangeText: '#A3520C',
+  white: '#FFFFFF',
+}
+
+const grey = {
+  50: '#E9EAEC',
+  100: '#C9C9CE',
+  200: '#A5A6AE',
+  300: '#80828E',
+  400: '#656775',
+  500: '#535463',
+  600: '#434555',
+  700: '#3A3C4B',
+  800: '#2F303F',
+  900: '#222430',
+}
+
+const desktopMediaQuery = '@media (min-width:900px)'
 
 const theme = createTheme({
   palette: {
-    primary: { main: '#1F2A44', contrastText: '#FFFFFF' },
-    secondary: { main: '#F68D2E', contrastText: '#1F2A44' },
-    background: { default: '#F5F6F8', paper: '#FFFFFF' },
-    text: { primary: '#222430', secondary: '#656775' },
-    success: { main: '#3E7E43' },
-    error: { main: '#C12022' },
-    warning: { main: '#FFA000' },
-    info: { main: '#0E7AB8' },
+    primary: {
+      main: brandColors.blue,
+      dark: brandColors.blueDark,
+      light: brandColors.blueTint,
+      contrastText: brandColors.white,
+    },
+    secondary: {
+      main: brandColors.orange,
+      dark: brandColors.orangeDark,
+      light: brandColors.orangeTint,
+      contrastText: brandColors.blue,
+    },
+    success: { main: '#3E7E43', dark: '#2F6A35', light: '#E7F2E8' },
+    error: { main: '#C12022', light: '#FBE8E8' },
+    warning: { main: '#FFA000', dark: '#8A5300', light: '#FFF6DC', contrastText: brandColors.blue },
+    info: { main: '#0E7AB8', dark: '#0B6AA1', light: '#E8F3FA' },
+    background: { default: '#F5F6F8', paper: brandColors.white },
+    text: { primary: grey[900], secondary: grey[400], disabled: grey[200] },
+    divider: grey[50],
+    grey,
+    accentText: brandColors.orangeText,
   },
   typography: {
-    fontFamily: '"Open Sans", Arial, sans-serif',
-    h1: { fontSize: '1.75rem', fontWeight: 600, lineHeight: '36px', color: '#1F2A44' },
-    h2: { fontSize: '1.5rem', fontWeight: 600, lineHeight: '32px', color: '#1F2A44' },
-    body1: { fontSize: '1rem', lineHeight: '24px' },
-    body2: { fontSize: '0.875rem', lineHeight: '20px' },
-    button: { fontSize: '0.9375rem', fontWeight: 600, textTransform: 'none' },
+    fontFamily: '"Open Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+    h1: {
+      fontSize: '1.75rem',
+      lineHeight: '2.25rem',
+      fontWeight: 600,
+      color: brandColors.blue,
+      [desktopMediaQuery]: { fontSize: '2.5rem', lineHeight: '3rem' },
+    },
+    h2: {
+      fontSize: '1.5rem',
+      lineHeight: '2rem',
+      fontWeight: 600,
+      color: brandColors.blue,
+      [desktopMediaQuery]: { fontSize: '2rem', lineHeight: '2.5rem' },
+    },
+    h3: {
+      fontSize: '1.25rem',
+      lineHeight: '1.75rem',
+      fontWeight: 600,
+      color: brandColors.blue,
+      [desktopMediaQuery]: { fontSize: '1.5rem', lineHeight: '2rem' },
+    },
+    h4: { fontSize: '1.125rem', lineHeight: '1.625rem', fontWeight: 600, color: brandColors.blue },
+    subtitle1: { fontSize: '1rem', lineHeight: '1.5rem', fontWeight: 600 },
+    subtitle2: { fontSize: '0.875rem', lineHeight: '1.25rem', fontWeight: 600 },
+    body1: { fontSize: '1rem', lineHeight: '1.5rem' },
+    body2: { fontSize: '0.875rem', lineHeight: '1.25rem' },
+    button: {
+      fontSize: '0.9375rem',
+      lineHeight: '1.25rem',
+      fontWeight: 600,
+      letterSpacing: '0.01em',
+      textTransform: 'none',
+    },
+    caption: { fontSize: '0.75rem', lineHeight: '1rem' },
+    overline: { fontSize: '0.75rem', lineHeight: '1rem', fontWeight: 600, letterSpacing: '0.08em' },
   },
   shape: { borderRadius: 8 },
+  brand: {
+    name: 'CoHispania',
+    logo: cohispaniaLogo,
+    logoNegative: cohispaniaLogoNegative,
+  },
 })
 
 export default theme
