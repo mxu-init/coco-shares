@@ -1,64 +1,58 @@
+import os
+
+os.environ.setdefault("APP_NAME", "COCO-SHARES")
+os.environ.setdefault("APP_VERSION", "1.0.0")
+os.environ.setdefault("APP_DESCRIPTION", "BOILERPLATE FASTAPI BASED")
+os.environ.setdefault("DB_HOST", "localhost")
+os.environ.setdefault("DB_NAME", "test_db")
+os.environ.setdefault("DB_USER", "test_user")
+os.environ.setdefault("DB_PASSWORD", "test_password")
+os.environ.setdefault("JWT_SECRET", "test_jwt_secret_with_enough_length_for_hs256")
+os.environ.setdefault("ADMIN_EMAIL", "admin@example.com")
+os.environ.setdefault("ADMIN_PASSWORD", "test_admin_password")
+
+from collections.abc import Iterator
+
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import URL, make_url
-from sqlalchemy.orm import Session
+from pytest_bdd import parsers, then
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
 
-from app.core.config import settings
-from app.core.database_connection import Base, get_db
+from app.core.database import Base
+from app.core.dependencies import get_db
 from app.main import app
 
-TEST_DATABASE_NAME = f"{settings.DB_NAME}_test"
-MAINTENANCE_DATABASE_NAME = "postgres"
+SQLITE_IN_MEMORY_URL = "sqlite://"
 
 
-def build_database_url(database_name: str) -> URL:
-    return make_url(settings.database_url).set(database=database_name)
-
-
-def create_test_database_if_missing() -> None:
-    maintenance_engine = create_engine(
-        build_database_url(MAINTENANCE_DATABASE_NAME),
-        isolation_level="AUTOCOMMIT",
+@pytest.fixture
+def db_session() -> Iterator[Session]:
+    engine = create_engine(
+        SQLITE_IN_MEMORY_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
     )
-    with maintenance_engine.connect() as connection:
-        database_exists = connection.execute(
-            text("SELECT 1 FROM pg_database WHERE datname = :database_name"),
-            {"database_name": TEST_DATABASE_NAME},
-        ).scalar()
-        if not database_exists:
-            connection.execute(text(f'CREATE DATABASE "{TEST_DATABASE_NAME}"'))
-    maintenance_engine.dispose()
-
-
-@pytest.fixture(scope="session")
-def test_engine():
-    create_test_database_if_missing()
-    engine = create_engine(build_database_url(TEST_DATABASE_NAME))
-    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
-    yield engine
+    with sessionmaker(bind=engine, expire_on_commit=False)() as session:
+        yield session
     Base.metadata.drop_all(bind=engine)
     engine.dispose()
 
 
 @pytest.fixture
-def db_session(test_engine):
-    connection = test_engine.connect()
-    transaction = connection.begin()
-    session = Session(bind=connection, join_transaction_mode="create_savepoint")
-    yield session
-    session.close()
-    transaction.rollback()
-    connection.close()
-
-
-@pytest.fixture
-def client(db_session):
-    def override_get_db():
-        yield db_session
-
-    app.dependency_overrides[get_db] = override_get_db
-    with TestClient(app) as test_client:
-        yield test_client
+def client(db_session: Session) -> Iterator[TestClient]:
+    app.dependency_overrides[get_db] = lambda: db_session
+    yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@then(parsers.parse("the response status is {status_code:d}"))
+def check_response_status(response, status_code: int) -> None:
+    assert response.status_code == status_code
+
+
+@then(parsers.parse('the response detail is "{detail}"'))
+def check_response_detail(response, detail: str) -> None:
+    assert response.json()["detail"] == detail
