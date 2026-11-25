@@ -95,6 +95,19 @@ const theme = createTheme({
     overline: { fontSize: '0.75rem', lineHeight: '1rem', fontWeight: 600, letterSpacing: '0.08em' },
   },
   shape: { borderRadius: 8 },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        sizeSmall: {
+          position: 'relative',
+          minHeight: 36,
+          padding: '0 16px',
+          fontSize: '0.875rem',
+          '&::after': { content: '""', position: 'absolute', inset: '-7px 0' },
+        },
+      },
+    },
+  },
   brand: {
     name: 'CoHispania',
     logo: cohispaniaLogo,
