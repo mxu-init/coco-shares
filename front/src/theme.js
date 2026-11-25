@@ -1,6 +1,8 @@
 import { createTheme } from '@mui/material/styles'
 import cohispaniaLogo from './assets/images/cohispaniaLogo.svg'
 import cohispaniaLogoNegative from './assets/images/cohispaniaLogoNegative.svg'
+import cohispaniaLogoCompactNegative from './assets/images/cohispaniaLogoCompactNegative.png'
+import cohispaniaIsotype from './assets/images/cohispaniaIsotype.png'
 
 const brandColors = {
   blue: '#1F2A44',
@@ -95,6 +97,8 @@ const theme = createTheme({
     name: 'CoHispania',
     logo: cohispaniaLogo,
     logoNegative: cohispaniaLogoNegative,
+    logoCompactNegative: cohispaniaLogoCompactNegative,
+    isotype: cohispaniaIsotype,
   },
 })
 
