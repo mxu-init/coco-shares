@@ -18,7 +18,6 @@ from app.core.exceptions import (
     UnauthorizedError,
 )
 from app.core.seed import seed_initial_data
-from app.models import create_tables
 
 ERROR_STATUS_CODES: dict[type[AppError], int] = {
     NotFoundError: status.HTTP_404_NOT_FOUND,
@@ -32,7 +31,6 @@ INVALID_DATA_MESSAGE = "Los datos enviados no son válidos"
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    create_tables()
     with SessionLocal() as session:
         seed_initial_data(session)
     yield
