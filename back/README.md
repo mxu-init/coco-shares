@@ -4,7 +4,7 @@ API FastAPI + PostgreSQL del portal del accionista de CoHispania. Sigue la guía
 
 ## Requisitos
 
-- Python 3.10 o superior
+- Python 3.11 o superior
 - PostgreSQL 14 o superior (con pgAdmin)
 - Git
 
