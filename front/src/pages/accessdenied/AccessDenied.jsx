@@ -1,15 +1,15 @@
-import { Button, Container, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
+import LockOutlined from '@mui/icons-material/LockOutlined'
+import EmptyState from '../../components/EmptyState/EmptyState'
 
 function AccessDenied() {
   return (
-    <Container maxWidth="sm" sx={{ py: 6 }}>
-      <Typography variant="h1" gutterBottom>Acceso denegado</Typography>
-      <Typography variant="body1" sx={{ mb: 3 }}>
-        No tiene permiso para ver esta página.
-      </Typography>
-      <Button component={Link} to="/" variant="contained">Volver al inicio</Button>
-    </Container>
+    <EmptyState
+      icon={LockOutlined}
+      title="Acceso denegado"
+      description="No tiene permiso para ver esta página. Si cree que se trata de un error, póngase en contacto con la sociedad."
+      actionLabel="Volver al inicio"
+      actionPath="/"
+    />
   )
 }
 
