@@ -30,6 +30,7 @@ class RepresentationFormStatus(StrEnum):
 class PageKey(StrEnum):
     DEFAULT_LEGAL_TERMS = "default_legal_terms"
     NO_ACTIVE_MEETING = "no_active_meeting"
+    DEFAULT_ANNOUNCEMENT = "default_announcement"
 
 
 class HealthStatus(StrEnum):

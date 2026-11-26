@@ -2,7 +2,7 @@ from pytest_bdd import scenarios, then, when
 from sqlalchemy import func, select
 
 from app.core.enums import UserRole
-from app.core.seed import seed_initial_data
+from seeders.initial_data_seeder import seed_initial_data
 from app.models.app_user_model import AppUser
 
 scenarios("seed.feature")
