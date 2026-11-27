@@ -3,7 +3,6 @@ from pytest_bdd import given, parsers, scenarios, when
 
 from app.core.dependencies import require_roles
 from app.core.enums import UserRole
-from app.core.security import create_access_token
 from app.main import app
 
 scenarios("role_access.feature")
@@ -33,9 +32,8 @@ def register_protected_endpoint() -> None:
 
 
 @when(parsers.parse('the client requests it with a token for the role "{role}"'), target_fixture="response")
-def request_with_role(client, role: str):
-    token = create_access_token(subject="1", role=UserRole(role))
-    return client.get(PROTECTED_PATH, headers=bearer_headers(token))
+def request_with_role(client, auth_headers, role: str):
+    return client.get(PROTECTED_PATH, headers=auth_headers(UserRole(role)))
 
 
 @when("the client requests it without a token", target_fixture="response")
