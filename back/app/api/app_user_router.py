@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db, require_roles
 from app.core.enums import PersonType, UserRole
-from app.schemas.app_user_schema import UserDetailRead, UserPageRead
+from app.schemas.app_user_schema import UserCreate, UserDetailRead, UserPageRead, UserCreatedRead
 from app.services import app_user_service
 
 router = APIRouter(
@@ -37,3 +37,8 @@ def list_users(
 @router.get("/{user_id}", response_model=UserDetailRead)
 def get_user(user_id: int, db: Session = Depends(get_db)):
     return app_user_service.get_user(db, user_id)
+
+
+@router.post("", response_model=UserCreatedRead, status_code=status.HTTP_201_CREATED)
+def create_user(user_data: UserCreate, db: Session = Depends(get_db)) -> UserCreatedRead:
+    return app_user_service.create_user(db, user_data)

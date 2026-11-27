@@ -12,6 +12,7 @@ from app.core.exceptions import (
     NotFoundError,
     PermissionDeniedError,
     UnauthorizedError,
+    InvalidDataError
 )
 
 ERROR_STATUS_CODES: dict[type[AppError], int] = {
@@ -19,6 +20,7 @@ ERROR_STATUS_CODES: dict[type[AppError], int] = {
     ConflictError: status.HTTP_409_CONFLICT,
     UnauthorizedError: status.HTTP_401_UNAUTHORIZED,
     PermissionDeniedError: status.HTTP_403_FORBIDDEN,
+    InvalidDataError: status.HTTP_422_UNPROCESSABLE_ENTITY,
 }
 UNAUTHORIZED_HEADERS = {"WWW-Authenticate": "Bearer"}
 INVALID_DATA_MESSAGE = "Los datos enviados no son válidos"
