@@ -1,19 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { login, logout } from './authService'
+import { fetchCurrentUser, login, logout } from './authService'
 import { getToken, saveToken } from './sessionService'
 
-const { postMock } = vi.hoisted(() => ({ postMock: vi.fn() }))
+const { getMock, postMock } = vi.hoisted(() => ({ getMock: vi.fn(), postMock: vi.fn() }))
 
 vi.mock('axios', () => ({
   default: { create: () => ({ post: postMock }) },
 }))
 
+vi.mock('./api', () => ({ default: { get: getMock } }))
+
 const INVALID_CREDENTIALS_MESSAGE = 'Email o contraseña incorrectos'
+const CURRENT_USER = { id: 1, first_name: 'Ana', last_name: 'García', role: 'user' }
 
 describe('authService', () => {
   beforeEach(() => {
     localStorage.clear()
     postMock.mockReset()
+    getMock.mockReset()
   })
 
   it('sends the credentials as form data and saves the token', async () => {
@@ -49,5 +53,20 @@ describe('authService', () => {
     logout()
 
     expect(getToken()).toBeNull()
+  })
+
+  it('fetches the current user from /auth/me', async () => {
+    getMock.mockResolvedValue({ data: CURRENT_USER })
+
+    await expect(fetchCurrentUser()).resolves.toEqual(CURRENT_USER)
+    expect(getMock).toHaveBeenCalledWith('/auth/me')
+  })
+
+  it('throws a clear message when the current user cannot be loaded', async () => {
+    getMock.mockRejectedValue(new Error('Network Error'))
+
+    await expect(fetchCurrentUser()).rejects.toThrow(
+      'No se han podido cargar los datos de su sesión. Inténtelo de nuevo más tarde.',
+    )
   })
 })

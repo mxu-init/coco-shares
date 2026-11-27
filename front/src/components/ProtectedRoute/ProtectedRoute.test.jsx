@@ -8,14 +8,19 @@ const PROTECTED_CONTENT = 'Página de gestión'
 const LOGIN_CONTENT = 'Página de inicio de sesión'
 const ACCESS_DENIED_CONTENT = 'Página de acceso denegado'
 const MANAGEMENT_ROLES = ['manager', 'admin']
+const LOADING_LABEL = 'Comprobando su sesión'
 
 const buildUser = (role) => ({ first_name: 'Luis', last_name: 'Martín López', role })
 
-const renderProtectedRoute = (currentUser) =>
+const renderProtectedRoute = (currentUser, isLoadingUser = false) =>
   render(
     <MemoryRouter initialEntries={[PROTECTED_PATH]}>
       <Routes>
-        <Route element={<ProtectedRoute currentUser={currentUser} allowedRoles={MANAGEMENT_ROLES} />}>
+        <Route
+          element={
+            <ProtectedRoute currentUser={currentUser} isLoadingUser={isLoadingUser} allowedRoles={MANAGEMENT_ROLES} />
+          }
+        >
           <Route path={PROTECTED_PATH} element={<p>{PROTECTED_CONTENT}</p>} />
         </Route>
         <Route path="/login" element={<p>{LOGIN_CONTENT}</p>} />
@@ -26,6 +31,14 @@ const renderProtectedRoute = (currentUser) =>
 
 describe('ProtectedRoute', () => {
   afterEach(cleanup)
+
+  it('shows a loading indicator while the session is being checked', () => {
+    renderProtectedRoute(null, true)
+
+    expect(screen.getByRole('progressbar', { name: LOADING_LABEL })).toBeTruthy()
+    expect(screen.queryByText(LOGIN_CONTENT)).toBeNull()
+    expect(screen.queryByText(PROTECTED_CONTENT)).toBeNull()
+  })
 
   it('redirects visitors without a session to the login page', () => {
     renderProtectedRoute(null)
