@@ -53,7 +53,7 @@ function BackButton() {
   )
 }
 
-function userDetail() {
+function UserDetail() {
   const { userId } = useParams()
   const [result, setResult] = useState({ userId: null, user: null, errorStatus: null })
 
@@ -166,4 +166,4 @@ function userDetail() {
   )
 }
 
-export default userDetail
+export default UserDetail
