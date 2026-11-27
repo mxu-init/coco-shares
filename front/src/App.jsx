@@ -9,12 +9,11 @@ import Shareholders from './pages/shareholders/Shareholders'
 import Users from './pages/users/users'
 import UserDetail from './pages/users/userDetail'
 
-
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/management/users" element={<Users />} />
+        <Route path="/management/users" element={<users />} />
         <Route path="/management/users/:userId" element={<userDetail />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

@@ -25,7 +25,7 @@ import {
   formatNumber,
   formatPercentage,
   getFullName,
-} from './usersConfig'
+} from './userConfig'
 
 const NOT_FOUND_STATUSES = [404, 422]
 const FIELDS_GRID_SX = {
