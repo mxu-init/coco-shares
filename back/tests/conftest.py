@@ -8,8 +8,11 @@ os.environ.setdefault("DB_NAME", "test_db")
 os.environ.setdefault("DB_USER", "test_user")
 os.environ.setdefault("DB_PASSWORD", "test_password")
 os.environ.setdefault("JWT_SECRET", "test_jwt_secret_with_enough_length_for_hs256")
-os.environ.setdefault("ADMIN_EMAIL", "admin@example.com")
-os.environ.setdefault("ADMIN_PASSWORD", "test_admin_password")
+os.environ.setdefault("FIRST_ADMIN_EMAIL", "admin@example.com")
+os.environ.setdefault("FIRST_ADMIN_PASSWORD", "test_admin_password")
+os.environ.setdefault("FIRST_ADMIN_FIRST_NAME", "Admin")
+os.environ.setdefault("FIRST_ADMIN_LAST_NAME", "Test")
+os.environ.setdefault("FIRST_ADMIN_TAX_ID", "00000000T")
 
 from collections.abc import Iterator
 

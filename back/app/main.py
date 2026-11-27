@@ -1,6 +1,3 @@
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -9,7 +6,6 @@ from fastapi.responses import JSONResponse
 
 from app.api.api_router import api_router
 from app.core.config import settings
-from app.core.database import SessionLocal
 from app.core.exceptions import (
     AppError,
     ConflictError,
@@ -17,8 +13,6 @@ from app.core.exceptions import (
     PermissionDeniedError,
     UnauthorizedError,
 )
-from app.core.seed import seed_initial_data
-from app.models import create_tables
 
 ERROR_STATUS_CODES: dict[type[AppError], int] = {
     NotFoundError: status.HTTP_404_NOT_FOUND,
@@ -28,14 +22,6 @@ ERROR_STATUS_CODES: dict[type[AppError], int] = {
 }
 UNAUTHORIZED_HEADERS = {"WWW-Authenticate": "Bearer"}
 INVALID_DATA_MESSAGE = "Los datos enviados no son válidos"
-
-
-@asynccontextmanager
-async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    create_tables()
-    with SessionLocal() as session:
-        seed_initial_data(session)
-    yield
 
 
 async def handle_app_error(_: Request, error: AppError) -> JSONResponse:
@@ -55,7 +41,6 @@ app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description=settings.APP_DESCRIPTION,
-    lifespan=lifespan,
 )
 app.add_middleware(
     CORSMiddleware,

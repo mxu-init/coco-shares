@@ -4,7 +4,7 @@ API FastAPI + PostgreSQL del portal del accionista de CoHispania. Sigue la guía
 
 ## Requisitos
 
-- Python 3.10 o superior
+- Python 3.11 o superior
 - PostgreSQL 14 o superior (con pgAdmin)
 - Git
 
@@ -21,7 +21,7 @@ Todos los comandos se ejecutan dentro de `back/`.
 
 2. **Crear la base de datos** desde pgAdmin (por ejemplo `coco_shares`).
 
-3. **Configurar el `.env`**: copia `.env.example` a `.env` y rellena al menos `DB_NAME`, `DB_PASSWORD`, `JWT_SECRET`, `ADMIN_EMAIL` y `ADMIN_PASSWORD`. El `.env` nunca se sube al repositorio.
+3. **Configurar el `.env`**: copia `.env.example` a `.env` y rellena al menos `DB_NAME`, `DB_PASSWORD`, `JWT_SECRET` y las variables `FIRST_ADMIN_*` (datos del primer administrador). El `.env` nunca se sube al repositorio.
 
 4. **Crear el entorno virtual**
 
@@ -43,15 +43,27 @@ Todos los comandos se ejecutan dentro de `back/`.
    python -m pip install -r requirements.txt
    ```
 
-7. **Arrancar el servidor**
+7. **Crear o actualizar las tablas** con las migraciones de Alembic
+
+   ```
+   alembic upgrade head
+   ```
+
+   Vuelve a ejecutarlo cada vez que llegue una migración nueva a `alembic/versions/`.
+
+8. **Cargar los datos iniciales**: el primer administrador (variables `FIRST_ADMIN_*`) y los textos editables. Se puede ejecutar varias veces sin duplicar nada.
+
+   ```
+   python -m seeders
+   ```
+
+9. **Arrancar el servidor**
 
    ```
    uvicorn app.main:app --reload
    ```
 
-   Al arrancar se crean las tablas y el primer administrador (`ADMIN_EMAIL`). Si la conexión con la base de datos falla, el arranque se detiene con el error.
-
-8. **Comprobar**
+10. **Comprobar**
 
    - Swagger: <http://localhost:8000/docs>
    - Estado del servicio: <http://localhost:8000/api/v1/health>
@@ -67,10 +79,12 @@ Los tests usan escenarios Gherkin (`tests/features/`) y una base de datos tempor
 ## Estructura
 
 ```
+alembic/               migraciones de la base de datos
+seeders/               datos iniciales (primer admin y textos)
 app/
 ├── main.py            app, CORS, manejo de errores y arranque
 ├── api/               routers + api_router.py (/api/v1)
-├── core/              config, BD, enums, dependencias, seguridad, excepciones, seed
+├── core/              config, BD, enums, dependencias, seguridad, excepciones
 ├── models/            modelos SQLAlchemy
 ├── repositories/      consultas a la base de datos
 ├── schemas/           schemas Pydantic

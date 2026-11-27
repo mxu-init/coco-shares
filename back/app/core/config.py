@@ -35,9 +35,11 @@ class Settings(BaseSettings):
     SMTP_FROM: str = ""
     REPRESENTATION_EMAIL: str = ""
 
-    ADMIN_EMAIL: str
-    ADMIN_PASSWORD: str
-    ADMIN_FULL_NAME: str = "Administrador"
+    FIRST_ADMIN_EMAIL: str
+    FIRST_ADMIN_PASSWORD: str
+    FIRST_ADMIN_FIRST_NAME: str
+    FIRST_ADMIN_LAST_NAME: str
+    FIRST_ADMIN_TAX_ID: str
 
     @property
     def database_url(self) -> URL:
