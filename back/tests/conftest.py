@@ -14,7 +14,8 @@ os.environ.setdefault("FIRST_ADMIN_FIRST_NAME", "Admin")
 os.environ.setdefault("FIRST_ADMIN_LAST_NAME", "Test")
 os.environ.setdefault("FIRST_ADMIN_TAX_ID", "00000000T")
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
+from itertools import count
 
 import pytest
 from fastapi.testclient import TestClient
@@ -25,7 +26,10 @@ from sqlalchemy.pool import StaticPool
 
 from app.core.database import Base
 from app.core.dependencies import get_db
+from app.core.enums import PersonType, UserRole
+from app.core.security import create_access_token
 from app.main import app
+from app.models import AppUser
 
 SQLITE_IN_MEMORY_URL = "sqlite://"
 
@@ -49,6 +53,39 @@ def client(db_session: Session) -> Iterator[TestClient]:
     app.dependency_overrides[get_db] = lambda: db_session
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def create_user(db_session: Session) -> Callable[..., AppUser]:
+    user_numbers = count(1)
+
+    def save_user(role: UserRole, is_active: bool = True) -> AppUser:
+        user_number = next(user_numbers)
+        user = AppUser(
+            role=role,
+            person_type=PersonType.INDIVIDUAL,
+            first_name="Test",
+            last_name=f"User {user_number}",
+            tax_id=f"TEST{user_number:05d}",
+            email=f"user{user_number}@example.com",
+            password_hash="hash",
+            is_active=is_active,
+        )
+        db_session.add(user)
+        db_session.commit()
+        return user
+
+    return save_user
+
+
+@pytest.fixture
+def auth_headers(create_user: Callable[..., AppUser]) -> Callable[[UserRole], dict[str, str]]:
+    def build_auth_headers(role: UserRole) -> dict[str, str]:
+        user = create_user(role)
+        token = create_access_token(subject=str(user.id), role=user.role)
+        return {"Authorization": f"Bearer {token}"}
+
+    return build_auth_headers
 
 
 @then(parsers.parse("the response status is {status_code:d}"))

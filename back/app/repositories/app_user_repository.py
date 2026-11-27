@@ -11,6 +11,10 @@ def find_by_email(session: Session, email: str) -> AppUser | None:
 def find_by_tax_id(session: Session, tax_id: str) -> AppUser | None:
     return session.scalar(select(AppUser).where(AppUser.tax_id == tax_id))
 
+def find_by_id(session: Session, user_id: int) -> AppUser | None:
+    return session.get(AppUser, user_id)
+
+
 def add(session: Session, user: AppUser) -> AppUser:
     session.add(user)
     session.commit()

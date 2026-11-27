@@ -21,10 +21,15 @@ TEMPORARY_PASSWORD_CHARACTER_GROUPS = (
     TEMPORARY_PASSWORD_SPECIAL_CHARACTERS,
 )
 TEMPORARY_PASSWORD_ALPHABET = "".join(TEMPORARY_PASSWORD_CHARACTER_GROUPS)
+REQUIRED_TOKEN_CLAIMS = ["exp", "sub"]
 
 
 def hash_password(plain_password: str) -> str:
     return password_hasher.hash(plain_password)
+
+
+def verify_password(plain_password: str, password_hash: str) -> bool:
+    return password_hasher.verify(plain_password, password_hash)
 
 
 def create_access_token(subject: str, role: UserRole) -> str:
@@ -34,7 +39,13 @@ def create_access_token(subject: str, role: UserRole) -> str:
 
 
 def decode_access_token(token: str) -> dict[str, Any]:
-    return jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+    return jwt.decode(
+        token,
+        settings.JWT_SECRET,
+        algorithms=[settings.JWT_ALGORITHM],
+        options={"require": REQUIRED_TOKEN_CLAIMS},
+    )
+
 
 def generate_temporary_password() -> str:
     required_characters = [secrets.choice(group) for group in TEMPORARY_PASSWORD_CHARACTER_GROUPS]

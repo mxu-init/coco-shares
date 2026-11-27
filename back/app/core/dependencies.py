@@ -11,6 +11,10 @@ from app.core.database import SessionLocal
 from app.core.enums import UserRole
 from app.core.exceptions import PermissionDeniedError, UnauthorizedError
 from app.core.security import decode_access_token
+from app.models.app_user_model import AppUser
+from app.services import app_user_service
+
+INVALID_SESSION_MESSAGE = "La sesión no es válida o ha caducado"
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_PREFIX}/auth/token",
@@ -29,15 +33,26 @@ def get_token_payload(token: str | None = Depends(oauth2_scheme)) -> dict[str, A
     try:
         return decode_access_token(token)
     except jwt.PyJWTError:
-        raise UnauthorizedError("La sesión no es válida o ha caducado") from None
+        raise UnauthorizedError(INVALID_SESSION_MESSAGE) from None
 
 
-def require_roles(*allowed_roles: UserRole) -> Callable[..., dict[str, Any]]:
-    allowed_role_values = {role.value for role in allowed_roles}
+def get_current_user(
+    payload: dict[str, Any] = Depends(get_token_payload),
+    db: Session = Depends(get_db),
+) -> AppUser:
+    subject = str(payload.get("sub"))
+    if not (subject.isascii() and subject.isdigit()):
+        raise UnauthorizedError(INVALID_SESSION_MESSAGE)
+    user = app_user_service.find_active_user(db, int(subject))
+    if user is None:
+        raise UnauthorizedError(INVALID_SESSION_MESSAGE)
+    return user
 
-    def check_role(payload: dict[str, Any] = Depends(get_token_payload)) -> dict[str, Any]:
-        if payload.get("role") not in allowed_role_values:
+
+def require_roles(*allowed_roles: UserRole) -> Callable[..., AppUser]:
+    def check_role(current_user: AppUser = Depends(get_current_user)) -> AppUser:
+        if current_user.role not in allowed_roles:
             raise PermissionDeniedError()
-        return payload
+        return current_user
 
     return check_role
