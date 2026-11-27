@@ -6,15 +6,16 @@ import Login from './pages/login/Login'
 import AccessDenied from './pages/accessdenied/AccessDenied'
 import NotFound from './pages/notfound/NotFound'
 import Shareholders from './pages/shareholders/Shareholders'
-import Users from './pages/users/Users'
-import UserDetail from './pages/users/UserDetail'
+import Users from './pages/users/users'
+import UserDetail from './pages/users/userDetail'
+
 
 function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route path="/management/users" element={<Users />} />
-        <Route path="/management/users/:userId" element={<UserDetail />} />
+        <Route path="/management/users/:userId" element={<userDetail />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/access-denied" element={<AccessDenied />} />

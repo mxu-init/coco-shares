@@ -25,7 +25,7 @@ import {
   formatNumber,
   formatPercentage,
   getFullName,
-} from './UsersConfig'
+} from './usersConfig'
 
 const NOT_FOUND_STATUSES = [404, 422]
 const FIELDS_GRID_SX = {
@@ -53,7 +53,7 @@ function BackButton() {
   )
 }
 
-function UserDetail() {
+function userDetail() {
   const { userId } = useParams()
   const [result, setResult] = useState({ userId: null, user: null, errorStatus: null })
 
@@ -166,4 +166,4 @@ function UserDetail() {
   )
 }
 
-export default UserDetail
+export default userDetail

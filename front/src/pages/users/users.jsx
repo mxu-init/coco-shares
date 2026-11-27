@@ -21,7 +21,7 @@ import {
   Typography,
 } from '@mui/material'
 import { getUsers } from '../../api/usersApi'
-import { ROLE_LABELS, USERS_ROUTE, getFullName } from './UsersConfig'
+import { ROLE_LABELS, USERS_ROUTE, getFullName } from './userConfig'
 
 const SEARCH_DELAY_MS = 400
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50]
@@ -207,4 +207,4 @@ function Users() {
   )
 }
 
-export default Users
+export default users
