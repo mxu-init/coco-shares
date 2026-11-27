@@ -14,6 +14,10 @@ def hash_password(plain_password: str) -> str:
     return password_hasher.hash(plain_password)
 
 
+def verify_password(plain_password: str, password_hash: str) -> bool:
+    return password_hasher.verify(plain_password, password_hash)
+
+
 def create_access_token(subject: str, role: UserRole) -> str:
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=settings.JWT_EXPIRE_MINUTES)
     payload = {"sub": subject, "role": role.value, "exp": expires_at}
