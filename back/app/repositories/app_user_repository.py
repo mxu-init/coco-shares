@@ -21,6 +21,26 @@ def add(session: Session, user: AppUser) -> AppUser:
     session.refresh(user)
     return user
 
+
+def save(session: Session, user: AppUser) -> AppUser:
+    session.commit()
+    session.refresh(user)
+    return user
+
+
+def delete(session: Session, user: AppUser) -> None:
+    session.delete(user)
+    session.commit()
+
+
+def count_active_admins(session: Session) -> int:
+    stmt = select(func.count()).select_from(AppUser).where(
+        AppUser.role == UserRole.ADMIN,
+        AppUser.is_active.is_(True),
+    )
+    return session.scalar(stmt) or 0
+
+
 def list_paginated(
     db: Session,
     *,

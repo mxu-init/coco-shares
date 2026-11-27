@@ -66,6 +66,31 @@ class UserCreate(BaseModel):
     def normalize_tax_id_value(cls, tax_id: str) -> str:
         return normalize_tax_id(tax_id)
 
+
+class ShareholderUpdate(BaseModel):
+    representative_name: str | None = None
+    representative_tax_id: str | None = None
+    shares_count: int | None = None
+    shares_percentage: Decimal | None = None
+    share_capital: Decimal | None = None
+
+
+class UserUpdate(BaseModel):
+    role: UserRole | None = None
+    person_type: PersonType | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    email: str | None = None
+    tax_id: str | None = None
+    phone: str | None = None
+    address: str | None = None
+    shareholder: ShareholderUpdate | None = None
+
+
+class UserStatusUpdate(BaseModel):
+    is_active: bool
+
+
 class ShareholderRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -99,6 +124,10 @@ class UserDetailRead(UserListRead):
 
 
 class UserCreatedRead(UserDetailRead):
+    temporary_password: str
+
+
+class TemporaryPasswordRead(BaseModel):
     temporary_password: str
     
 
