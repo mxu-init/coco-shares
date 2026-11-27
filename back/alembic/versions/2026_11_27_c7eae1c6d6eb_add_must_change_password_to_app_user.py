@@ -17,15 +17,8 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-
     op.add_column('app_user', sa.Column('must_change_password', sa.Boolean(), server_default=sa.text('true'), nullable=False))
 
 
 def downgrade() -> None:
-
     op.drop_column('app_user', 'must_change_password')
-    sa.Column('id', sa.BIGINT(), autoincrement=True, nullable=False),
-    sa.Column('test_name', sa.VARCHAR(length=50), autoincrement=False, nullable=True),
-    sa.Column('test_type', sa.VARCHAR(length=100), autoincrement=False, nullable=True),
-    sa.PrimaryKeyConstraint('id', name=op.f('test_pkey'))
-    
