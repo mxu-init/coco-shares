@@ -29,6 +29,13 @@ def list_users(
     return UserPageRead(items=items, total=total, page=page, size=size)
 
 
+def find_active_user(db: Session, user_id: int) -> AppUser | None:
+    user = app_user_repository.find_by_id(db, user_id)
+    if user is None or not user.is_active:
+        return None
+    return user
+
+
 def get_user(db: Session, user_id: int) -> AppUser:
     user = app_user_repository.get_detail_by_id(db, user_id)
     if user is None:
