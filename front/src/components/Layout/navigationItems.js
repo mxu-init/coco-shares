@@ -8,11 +8,9 @@ import FactCheck from '@mui/icons-material/FactCheck'
 import FactCheckOutlined from '@mui/icons-material/FactCheckOutlined'
 import Groups from '@mui/icons-material/Groups'
 import GroupsOutlined from '@mui/icons-material/GroupsOutlined'
+import { ALL_ROLES, MANAGEMENT_ROLES } from '../../userRoles'
 
 export const HOME_PATH = '/'
-
-const VALID_ROLES = ['user', 'manager', 'admin']
-const MANAGEMENT_ROLES = ['manager', 'admin']
 
 const homeItem = { label: 'Inicio', path: HOME_PATH }
 
@@ -32,7 +30,7 @@ const managementItem = {
 
 export const getSectionItems = (role) => {
   if (MANAGEMENT_ROLES.includes(role)) return [...sectionItems, managementItem]
-  if (VALID_ROLES.includes(role)) return sectionItems
+  if (ALL_ROLES.includes(role)) return sectionItems
   return []
 }
 
