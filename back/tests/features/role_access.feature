@@ -11,7 +11,7 @@ Feature: Role based access
       | role        | status_code |
       | admin       | 200         |
       | manager     | 200         |
-      | shareholder | 403         |
+      | user        | 403         |
 
   Scenario: Access without a token is rejected
     When the client requests it without a token
