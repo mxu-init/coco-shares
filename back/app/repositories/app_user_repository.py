@@ -7,7 +7,9 @@ from app.models.app_user_model import AppUser
 
 def find_by_email(session: Session, email: str) -> AppUser | None:
     return session.scalar(select(AppUser).where(AppUser.email == email))
-
+    
+def find_by_tax_id(session: Session, tax_id: str) -> AppUser | None:
+    return session.scalar(select(AppUser).where(AppUser.tax_id == tax_id))
 
 def add(session: Session, user: AppUser) -> AppUser:
     session.add(user)
