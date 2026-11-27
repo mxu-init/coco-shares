@@ -41,7 +41,7 @@ def get_current_user(
     db: Session = Depends(get_db),
 ) -> AppUser:
     subject = str(payload.get("sub"))
-    if not subject.isdigit():
+    if not (subject.isascii() and subject.isdigit()):
         raise UnauthorizedError(INVALID_SESSION_MESSAGE)
     user = app_user_service.find_active_user(db, int(subject))
     if user is None:
