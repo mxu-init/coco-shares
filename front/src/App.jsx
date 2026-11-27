@@ -5,6 +5,7 @@ import Home from './pages/home/Home'
 import Login from './pages/login/Login'
 import AccessDenied from './pages/accessdenied/AccessDenied'
 import NotFound from './pages/notfound/NotFound'
+import Shareholders from './pages/shareholders/Shareholders'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/access-denied" element={<AccessDenied />} />
+        <Route path="/shareholders" element={<Shareholders />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
