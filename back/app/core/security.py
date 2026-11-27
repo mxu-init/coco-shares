@@ -9,6 +9,8 @@ from app.core.enums import UserRole
 
 password_hasher = PasswordHash.recommended()
 
+REQUIRED_TOKEN_CLAIMS = ["exp", "sub"]
+
 
 def hash_password(plain_password: str) -> str:
     return password_hasher.hash(plain_password)
@@ -25,4 +27,9 @@ def create_access_token(subject: str, role: UserRole) -> str:
 
 
 def decode_access_token(token: str) -> dict[str, Any]:
-    return jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+    return jwt.decode(
+        token,
+        settings.JWT_SECRET,
+        algorithms=[settings.JWT_ALGORITHM],
+        options={"require": REQUIRED_TOKEN_CLAIMS},
+    )

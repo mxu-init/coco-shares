@@ -9,6 +9,10 @@ def find_by_email(session: Session, email: str) -> AppUser | None:
     return session.scalar(select(AppUser).where(AppUser.email == email))
 
 
+def find_by_id(session: Session, user_id: int) -> AppUser | None:
+    return session.get(AppUser, user_id)
+
+
 def add(session: Session, user: AppUser) -> AppUser:
     session.add(user)
     session.commit()

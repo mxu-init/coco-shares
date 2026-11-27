@@ -4,7 +4,6 @@ from pytest_bdd import given, parsers, scenarios, then, when
 from sqlalchemy.orm import Session
 
 from app.core.enums import PersonType, UserRole
-from app.core.security import create_access_token
 from app.models import AppUser, Shareholder
 
 scenarios("shareholder_list.feature")
@@ -36,11 +35,6 @@ def build_user(
         address=address,
         password_hash="hash",
     )
-
-
-def bearer_headers(role: str) -> dict[str, str]:
-    token = create_access_token(subject="1", role=UserRole(role))
-    return {"Authorization": f"Bearer {token}"}
 
 
 def full_name(shareholder: dict) -> str:
@@ -96,16 +90,16 @@ def create_users(db_session: Session) -> list[AppUser]:
 
 
 @when(parsers.parse('a "{role}" requests the shareholder list'), target_fixture="response")
-def request_list(client, role: str):
-    return client.get(SHAREHOLDERS_PATH, headers=bearer_headers(role))
+def request_list(client, auth_headers, role: str):
+    return client.get(SHAREHOLDERS_PATH, headers=auth_headers(UserRole(role)))
 
 
 @when(
     parsers.parse('a "{role}" requests page {page:d} of the shareholder list with {size:d} shareholder per page'),
     target_fixture="response",
 )
-def request_page(client, role: str, page: int, size: int):
-    return client.get(SHAREHOLDERS_PATH, params={"page": page, "size": size}, headers=bearer_headers(role))
+def request_page(client, auth_headers, role: str, page: int, size: int):
+    return client.get(SHAREHOLDERS_PATH, params={"page": page, "size": size}, headers=auth_headers(UserRole(role)))
 
 
 @when("the shareholder list is requested without a token", target_fixture="response")
