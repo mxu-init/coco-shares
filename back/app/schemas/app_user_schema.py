@@ -1,11 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.enums import PersonType, UserRole
-from app.core.tax_id_validators import is_valid_dni_or_nie, is_valid_nif, normalize_tax_id
+from app.core.tax_id_validators import normalize_tax_id
 from app.models.app_user_model import (
     ADDRESS_MAX_LENGTH,
     EMAIL_MAX_LENGTH,
@@ -68,25 +67,6 @@ class UserCreate(BaseModel):
     @classmethod
     def normalize_tax_id_value(cls, tax_id: str) -> str:
         return normalize_tax_id(tax_id)
-
-    @model_validator(mode="after")
-    def check_person_type_rules(self) -> Self:
-        if self.person_type == PersonType.INDIVIDUAL:
-            if not self.last_name:
-                raise ValueError(LAST_NAME_REQUIRED_MESSAGE)
-            if not is_valid_dni_or_nie(self.tax_id):
-                raise ValueError(INVALID_INDIVIDUAL_TAX_ID_MESSAGE)
-        else:
-            self.last_name = None
-            if not is_valid_nif(self.tax_id):
-                raise ValueError(INVALID_LEGAL_ENTITY_TAX_ID_MESSAGE)
-        return self
-
-    @model_validator(mode="after")
-    def check_shareholder_contact(self) -> Self:
-        if self.shareholder is not None and not (self.phone and self.address):
-            raise ValueError(SHAREHOLDER_CONTACT_REQUIRED_MESSAGE)
-        return self
 
 class ShareholderRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
