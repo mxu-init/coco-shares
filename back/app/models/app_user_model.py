@@ -35,7 +35,6 @@ class AppUser(Base):
     phone: Mapped[str | None] = mapped_column(String(PHONE_MAX_LENGTH))
     address: Mapped[str | None] = mapped_column(String(ADDRESS_MAX_LENGTH))
     password_hash: Mapped[str] = mapped_column(String(PASSWORD_HASH_MAX_LENGTH))
-    must_change_password: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=true())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(

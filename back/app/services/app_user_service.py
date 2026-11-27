@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.core.enums import PersonType, UserRole
 from app.core.exceptions import ConflictError, InvalidDataError, NotFoundError
 from app.core.tax_id_validators import is_valid_dni_or_nie, is_valid_nif
-from app.core.security import generate_temporary_password, hash_password
+from app.core.security import create_activation_token, generate_unusable_password, hash_password
 from app.models.app_user_model import AppUser
 from app.models.shareholder_model import Shareholder
 from app.schemas.app_user_schema import UserCreate, UserCreatedRead, UserDetailRead, UserPageRead
@@ -53,10 +53,10 @@ def create_user(db: Session, user_data: UserCreate) -> UserCreatedRead:
     apply_person_type_rules(user_data)
     ensure_shareholder_has_contact(user_data)
     ensure_user_is_unique(db, user_data)
-    temporary_password = generate_temporary_password()
-    user = app_user_repository.add(db, build_user(user_data, temporary_password))
+    user = app_user_repository.add(db, build_user(user_data))
     created_user = UserDetailRead.model_validate(user)
-    return UserCreatedRead(**created_user.model_dump(), temporary_password=temporary_password)
+    activation_token = create_activation_token(user.id, user.password_hash)
+    return UserCreatedRead(**created_user.model_dump(), activation_token=activation_token)
 
 
 def apply_person_type_rules(user_data: UserCreate) -> None:
@@ -89,11 +89,10 @@ def ensure_user_is_unique(db: Session, user_data: UserCreate) -> None:
         raise ConflictError(DUPLICATED_TAX_ID_MESSAGE)
 
 
-def build_user(user_data: UserCreate, temporary_password: str) -> AppUser:
+def build_user(user_data: UserCreate) -> AppUser:
     user = AppUser(
         **user_data.model_dump(exclude={"shareholder"}),
-        password_hash=hash_password(temporary_password),
-        must_change_password=True,
+        password_hash=hash_password(generate_unusable_password()),
     )
     if user_data.shareholder is not None:
         user.shareholder = Shareholder(**user_data.shareholder.model_dump())

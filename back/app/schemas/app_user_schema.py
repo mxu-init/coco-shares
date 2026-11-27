@@ -24,10 +24,6 @@ from app.models.shareholder_model import (
 )
 
 EMAIL_PATTERN = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
-INVALID_INDIVIDUAL_TAX_ID_MESSAGE = "El DNI o NIE no es válido"
-INVALID_LEGAL_ENTITY_TAX_ID_MESSAGE = "El NIF no es válido"
-LAST_NAME_REQUIRED_MESSAGE = "Los apellidos son obligatorios en una persona física"
-SHAREHOLDER_CONTACT_REQUIRED_MESSAGE = "El teléfono y la dirección son obligatorios en un accionista"
 
 
 class ShareholderCreate(BaseModel):
@@ -99,11 +95,11 @@ class UserDetailRead(UserListRead):
 
 
 class UserCreatedRead(UserDetailRead):
-    temporary_password: str
-    
+    activation_token: str
+
 
 class UserPageRead(BaseModel):
     items: list[UserListRead]
     total: int
     page: int
-    size: int
+    size: int

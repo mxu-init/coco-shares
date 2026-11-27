@@ -3,7 +3,7 @@ Feature: User creation
   Scenario: An admin creates a user
     When an admin creates an individual user with tax id "12345678Z"
     Then the response status is 201
-    And the created user is returned with a temporary password
+    And the created user is returned with an activation token
 
   Scenario: A repeated email is rejected
     Given a user with email "ana.lopez@correo.es" already exists
@@ -19,4 +19,4 @@ Feature: User creation
   Scenario: A company is saved without last name
     When an admin creates a company with last name "López"
     Then the response status is 201
-    And the created user has no last name
+    And the created user has no last name

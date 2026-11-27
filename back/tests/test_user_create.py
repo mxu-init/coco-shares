@@ -2,12 +2,7 @@ from pytest_bdd import given, parsers, scenarios, then, when
 from sqlalchemy.orm import Session
 
 from app.core.enums import PersonType, UserRole
-from app.core.security import (
-    TEMPORARY_PASSWORD_CHARACTER_GROUPS,
-    TEMPORARY_PASSWORD_LENGTH,
-    create_access_token,
-    password_hasher,
-)
+from app.core.security import decode_activation_token
 from app.models import AppUser
 
 scenarios("user_create.feature")
@@ -21,7 +16,6 @@ INDIVIDUAL_USER = {
     "last_name": "López García",
     "email": "ana.lopez@correo.es",
     "tax_id": "12345678Z",
-    "password": "password123",
 }
 COMPANY_USER = {
     "role": "user",
@@ -29,13 +23,7 @@ COMPANY_USER = {
     "first_name": "Inversiones Levante S.L.",
     "email": "contactolevante@correo.es",
     "tax_id": "B12345674",
-    "password": "password123",
 }
-
-
-def admin_headers() -> dict[str, str]:
-    token = create_access_token(subject="1", role=UserRole.ADMIN)
-    return {"Authorization": f"Bearer {token}"}
 
 
 @given(parsers.parse('a user with email "{email}" already exists'))
@@ -55,29 +43,28 @@ def create_existing_user(db_session: Session, email: str) -> None:
 
 
 @when(parsers.parse('an admin creates an individual user with tax id "{tax_id}"'), target_fixture="response")
-def create_user_with_tax_id(client, tax_id: str):
-    return client.post(USERS_PATH, json={**INDIVIDUAL_USER, "tax_id": tax_id}, headers=admin_headers())
+def create_user_with_tax_id(client, auth_headers, tax_id: str):
+    return client.post(USERS_PATH, json={**INDIVIDUAL_USER, "tax_id": tax_id}, headers=auth_headers(UserRole.ADMIN))
 
 
 @when(parsers.parse('an admin creates an individual user with email "{email}"'), target_fixture="response")
-def create_user_with_email(client, email: str):
-    return client.post(USERS_PATH, json={**INDIVIDUAL_USER, "email": email}, headers=admin_headers())
+def create_user_with_email(client, auth_headers, email: str):
+    return client.post(USERS_PATH, json={**INDIVIDUAL_USER, "email": email}, headers=auth_headers(UserRole.ADMIN))
 
 
 @when(parsers.parse('an admin creates a company with last name "{last_name}"'), target_fixture="response")
-def create_company(client, last_name: str):
-    return client.post(USERS_PATH, json={**COMPANY_USER, "last_name": last_name}, headers=admin_headers())
+def create_company(client, auth_headers, last_name: str):
+    return client.post(
+        USERS_PATH, json={**COMPANY_USER, "last_name": last_name}, headers=auth_headers(UserRole.ADMIN)
+    )
 
 
-@then("the created user is returned with a temporary password")
-def check_created_user(response, db_session: Session) -> None:
+@then("the created user is returned with an activation token")
+def check_created_user(response) -> None:
     body = response.json()
     assert body["email"] == INDIVIDUAL_USER["email"]
-    assert len(body["temporary_password"]) == TEMPORARY_PASSWORD_LENGTH
-    assert all(
-    any(character in group for character in body["temporary_password"])
-    for group in TEMPORARY_PASSWORD_CHARACTER_GROUPS
-    )
+    assert decode_activation_token(body["activation_token"])["sub"] == str(body["id"])
+    assert "password_hash" not in body
 
 
 @then("the created user has no last name")
