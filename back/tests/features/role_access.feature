@@ -29,6 +29,25 @@ Feature: Role based access
     Then the response status is 401
     And the response detail is "La sesión no es válida o ha caducado"
 
+  Scenario: Access with a token without an expiration date is rejected
+    Given an active user with the role "admin"
+    When the client requests it with a token without an expiration date for that user
+    Then the response status is 401
+    And the response detail is "La sesión no es válida o ha caducado"
+
+  Scenario Outline: Access with a token whose subject is not a valid user id is rejected
+    Given an active user with the role "admin"
+    When the client requests it with a token whose subject is "<subject>"
+    Then the response status is 401
+    And the response detail is "La sesión no es válida o ha caducado"
+
+    Examples:
+      | subject |
+      | abc     |
+      | -1      |
+      | ²       |
+      | ١       |
+
   Scenario: An inactive user is rejected even with a valid token
     Given an inactive user with the role "admin"
     When the client requests it with a token for that user

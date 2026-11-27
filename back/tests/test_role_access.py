@@ -1,5 +1,8 @@
 from collections.abc import Callable
+from datetime import datetime, timedelta, timezone
+from typing import Any
 
+import jwt
 from fastapi import Depends
 from pytest_bdd import given, parsers, scenarios, when
 from sqlalchemy.orm import Session
@@ -25,6 +28,14 @@ def read_protected_resource() -> dict[str, str]:
 
 def bearer_headers(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
+
+
+def encode_token(payload: dict[str, Any]) -> str:
+    return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+
+
+def build_expiration_date() -> datetime:
+    return datetime.now(timezone.utc) + timedelta(minutes=settings.JWT_EXPIRE_MINUTES)
 
 
 @given("an endpoint restricted to managers and admins")
@@ -65,6 +76,18 @@ def request_with_user_token(client, user: AppUser):
 def request_with_expired_token(client, monkeypatch, user: AppUser):
     monkeypatch.setattr(settings, "JWT_EXPIRE_MINUTES", EXPIRED_TOKEN_MINUTES)
     token = create_access_token(subject=str(user.id), role=user.role)
+    return client.get(PROTECTED_PATH, headers=bearer_headers(token))
+
+
+@when("the client requests it with a token without an expiration date for that user", target_fixture="response")
+def request_with_token_without_expiration(client, user: AppUser):
+    token = encode_token({"sub": str(user.id)})
+    return client.get(PROTECTED_PATH, headers=bearer_headers(token))
+
+
+@when(parsers.parse('the client requests it with a token whose subject is "{subject}"'), target_fixture="response")
+def request_with_token_subject(client, subject: str):
+    token = encode_token({"sub": subject, "exp": build_expiration_date()})
     return client.get(PROTECTED_PATH, headers=bearer_headers(token))
 
 
