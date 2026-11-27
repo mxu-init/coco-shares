@@ -1,3 +1,6 @@
+import secrets
+import string
+
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
@@ -8,6 +11,16 @@ from app.core.config import settings
 from app.core.enums import UserRole
 
 password_hasher = PasswordHash.recommended()
+
+TEMPORARY_PASSWORD_LENGTH = 12
+TEMPORARY_PASSWORD_SPECIAL_CHARACTERS = "!@#$%&*?-_+="
+TEMPORARY_PASSWORD_CHARACTER_GROUPS = (
+    string.ascii_uppercase,
+    string.ascii_lowercase,
+    string.digits,
+    TEMPORARY_PASSWORD_SPECIAL_CHARACTERS,
+)
+TEMPORARY_PASSWORD_ALPHABET = "".join(TEMPORARY_PASSWORD_CHARACTER_GROUPS)
 
 
 def hash_password(plain_password: str) -> str:
@@ -22,3 +35,11 @@ def create_access_token(subject: str, role: UserRole) -> str:
 
 def decode_access_token(token: str) -> dict[str, Any]:
     return jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+
+def generate_temporary_password() -> str:
+    required_characters = [secrets.choice(group) for group in TEMPORARY_PASSWORD_CHARACTER_GROUPS]
+    remaining_length = TEMPORARY_PASSWORD_LENGTH - len(required_characters)
+    random_characters = [secrets.choice(TEMPORARY_PASSWORD_ALPHABET) for _ in range(remaining_length)]
+    password_characters = required_characters + random_characters
+    secrets.SystemRandom().shuffle(password_characters)
+    return "".join(password_characters)

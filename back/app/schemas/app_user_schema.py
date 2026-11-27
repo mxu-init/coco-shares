@@ -23,7 +23,6 @@ from app.models.shareholder_model import (
     SHARES_PERCENTAGE_SCALE,
 )
 
-PASSWORD_MIN_LENGTH = 8
 EMAIL_PATTERN = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
 INVALID_INDIVIDUAL_TAX_ID_MESSAGE = "El DNI o NIE no es válido"
 INVALID_LEGAL_ENTITY_TAX_ID_MESSAGE = "El NIF no es válido"
@@ -53,7 +52,6 @@ class UserCreate(BaseModel):
     last_name: str | None = Field(None, max_length=LAST_NAME_MAX_LENGTH)
     email: str = Field(max_length=EMAIL_MAX_LENGTH, pattern=EMAIL_PATTERN)
     tax_id: str
-    password: str = Field(min_length=PASSWORD_MIN_LENGTH)
     phone: str | None = Field(None, max_length=PHONE_MAX_LENGTH)
     address: str | None = Field(None, max_length=ADDRESS_MAX_LENGTH)
     shareholder: ShareholderCreate | None = None
@@ -99,6 +97,10 @@ class UserDetailRead(UserListRead):
     updated_at: datetime
     shareholder: ShareholderRead | None = None
 
+
+class UserCreatedRead(UserDetailRead):
+    temporary_password: str
+    
 
 class UserPageRead(BaseModel):
     items: list[UserListRead]

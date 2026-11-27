@@ -2,7 +2,12 @@ from pytest_bdd import given, parsers, scenarios, then, when
 from sqlalchemy.orm import Session
 
 from app.core.enums import PersonType, UserRole
-from app.core.security import create_access_token
+from app.core.security import (
+    TEMPORARY_PASSWORD_CHARACTER_GROUPS,
+    TEMPORARY_PASSWORD_LENGTH,
+    create_access_token,
+    password_hasher,
+)
 from app.models import AppUser
 
 scenarios("user_create.feature")
@@ -64,12 +69,15 @@ def create_company(client, last_name: str):
     return client.post(USERS_PATH, json={**COMPANY_USER, "last_name": last_name}, headers=admin_headers())
 
 
-@then("the created user is returned without its password")
-def check_created_user(response) -> None:
+@then("the created user is returned with a temporary password")
+def check_created_user(response, db_session: Session) -> None:
     body = response.json()
     assert body["email"] == INDIVIDUAL_USER["email"]
-    assert "password" not in body
-    assert "password_hash" not in body
+    assert len(body["temporary_password"]) == TEMPORARY_PASSWORD_LENGTH
+    assert all(
+    any(character in group for character in body["temporary_password"])
+    for group in TEMPORARY_PASSWORD_CHARACTER_GROUPS
+    )
 
 
 @then("the created user has no last name")

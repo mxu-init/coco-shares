@@ -3,7 +3,7 @@ Feature: User creation
   Scenario: An admin creates a user
     When an admin creates an individual user with tax id "12345678Z"
     Then the response status is 201
-    And the created user is returned without its password
+    And the created user is returned with a temporary password
 
   Scenario: A repeated email is rejected
     Given a user with email "ana.lopez@correo.es" already exists
