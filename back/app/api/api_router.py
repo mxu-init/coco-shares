@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api import activation_router, app_user_router, auth_router, health_router, shareholder_router
+from app.api import activation_router, app_user_router, auth_router, health_router, shareholder_router, user_shareholder_router
 from app.core.config import settings
 
 api_router = APIRouter(prefix=settings.API_V1_PREFIX)
@@ -8,4 +8,5 @@ api_router.include_router(health_router.router)
 api_router.include_router(app_user_router.router)
 api_router.include_router(auth_router.router)
 api_router.include_router(activation_router.router)
-api_router.include_router(shareholder_router.router)
+api_router.include_router(shareholder_router.router)
+api_router.include_router(user_shareholder_router.router)
