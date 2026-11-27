@@ -19,22 +19,23 @@ Feature: Shareholder record management
     When the admin creates the shareholder record with <shares> shares, <percentage> percent and <capital> of capital
     Then the response status is 422
     And the response detail is "Los datos enviados no son válidos"
+    And the invalid field is "<field>"
     And the user has no shareholder record
 
     Examples:
-      | shares | percentage | capital  |
-      | -1     | 10         | 100.00   |
-      | 100    | -0.0001    | 100.00   |
-      | 100    | 100.0001   | 100.00   |
-      | 100    | 10.12345   | 100.00   |
-      | 100    | 10         | -0.01    |
-      | 100    | 10         | 100.123  |
+      | shares | percentage | capital | field             |
+      | -1     | 10         | 100.00  | shares_count      |
+      | 100    | -0.0001    | 100.00  | shares_percentage |
+      | 100    | 100.0001   | 100.00  | shares_percentage |
+      | 100    | 10.12345   | 100.00  | shares_percentage |
+      | 100    | 10         | -0.01   | share_capital     |
+      | 100    | 10         | 100.123 | share_capital     |
 
   Scenario: A shareholder record needs the phone and address of the user
     Given the user has no phone
     When the admin creates the shareholder record with 1500 shares, 12.3456 percent and 1500.00 of capital
     Then the response status is 422
-    And the response detail is "Los datos enviados no son válidos"
+    And the response detail is "El usuario debe tener teléfono y dirección para tener ficha de accionista"
 
   Scenario: An admin edits the shareholder record and the values are kept as typed
     Given the user already has a shareholder record
@@ -48,6 +49,7 @@ Feature: Shareholder record management
     When the admin changes the percentage to 101
     Then the response status is 422
     And the response detail is "Los datos enviados no son válidos"
+    And the invalid field is "shares_percentage"
     And the user has a shareholder record with 1000 shares, 10.0000 percent and 1000.00 of capital
 
   Scenario: An admin deletes a shareholder record without dependencies

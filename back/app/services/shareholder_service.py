@@ -1,3 +1,4 @@
+from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -13,6 +14,7 @@ from app.services import app_user_service
 SHAREHOLDER_ALREADY_EXISTS_MESSAGE = "El usuario ya tiene una ficha de accionista"
 SHAREHOLDER_NOT_FOUND_MESSAGE = "El usuario no tiene ficha de accionista"
 SHAREHOLDER_HAS_DEPENDENCIES_MESSAGE = "No se puede eliminar la ficha porque tiene boletines de representación"
+SHAREHOLDER_CONTACT_REQUIRED_MESSAGE = "El usuario debe tener teléfono y dirección para tener ficha de accionista"
 EDITABLE_SHAREHOLDER_FIELDS = tuple(ShareholderCreate.model_fields)
 
 
@@ -58,7 +60,7 @@ def get_user_shareholder(db: Session, user_id: int) -> Shareholder:
 
 def ensure_user_has_contact(user: AppUser) -> None:
     if not (user.phone and user.address):
-        raise InvalidDataError()
+        raise InvalidDataError(SHAREHOLDER_CONTACT_REQUIRED_MESSAGE)
 
 
 def merge_shareholder_changes(shareholder: Shareholder, changes: ShareholderUpdate) -> ShareholderCreate:
@@ -66,5 +68,5 @@ def merge_shareholder_changes(shareholder: Shareholder, changes: ShareholderUpda
     shareholder_values.update(changes.model_dump(exclude_unset=True))
     try:
         return ShareholderCreate.model_validate(shareholder_values)
-    except ValidationError:
-        raise InvalidDataError() from None
+    except ValidationError as error:
+        raise RequestValidationError(error.errors(include_url=False)) from None

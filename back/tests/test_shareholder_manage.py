@@ -136,6 +136,11 @@ def check_representative_name(db_session: Session, user: AppUser, name: str) -> 
     assert db_session.get(AppUser, user.id).shareholder.representative_name == name
 
 
+@then(parsers.parse('the invalid field is "{field}"'))
+def check_invalid_field(response, field: str) -> None:
+    assert [error["loc"][-1] for error in response.json()["errors"]] == [field]
+
+
 @then("the user has no shareholder record")
 def check_no_shareholder(db_session: Session, user: AppUser) -> None:
     db_session.expire_all()
