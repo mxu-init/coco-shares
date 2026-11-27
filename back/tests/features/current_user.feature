@@ -11,3 +11,9 @@ Feature: Current user
     When the current user is requested without a token
     Then the response status is 401
     And the response detail is "No has iniciado sesión"
+
+  Scenario: A shareholder gets their shareholder data
+    Given a logged in shareholder
+    When the user requests their own data
+    Then the response status is 200
+    And the response contains the shareholder data of that user
