@@ -21,7 +21,7 @@ import {
   Typography,
 } from '@mui/material'
 import { getUsers } from '../../api/usersApi'
-import { ROLE_LABELS, USERS_ROUTE, getFullName } from './usersConfig'
+import { ROLE_LABELS, USERS_ROUTE, getFullName } from './UsersConfig'
 
 const SEARCH_DELAY_MS = 400
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50]
