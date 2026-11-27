@@ -20,3 +20,6 @@ class UnauthorizedError(AppError):
 
 class PermissionDeniedError(AppError):
     default_message = "No tienes permiso para realizar esta acción"
+
+class InvalidDataError(AppError):
+    default_message = "Los datos enviados no son válidos"
