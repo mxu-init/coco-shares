@@ -20,3 +20,11 @@ class ShareholderPublicPageRead(BaseModel):
     total: int
     page: int
     size: int
+
+
+class ShareholderUpdate(BaseModel):
+    representative_name: str | None = None
+    representative_tax_id: str | None = None
+    shares_count: int | None = None
+    shares_percentage: Decimal | None = None
+    share_capital: Decimal | None = None

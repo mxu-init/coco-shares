@@ -1,7 +1,5 @@
 import api from '../services/api'
 
-// Si VITE_API_URL ya incluye /api/v1, déjalo así.
-// Si solo apunta al servidor (http://localhost:8000), usa '/api/v1/users'.
 const USERS_PATH = '/users'
 
 export const getUsers = async (params) => {

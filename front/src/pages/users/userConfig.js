@@ -2,7 +2,7 @@ export const USERS_ROUTE = '/management/users'
 
 export const ROLE_LABELS = {
   admin: 'Administrador',
-  manager: 'Gestor',
+  manager: 'Manager',
   user: 'Usuario',
 }
 
@@ -15,7 +15,7 @@ export const getFullName = (user) =>
   [user.first_name, user.last_name].filter(Boolean).join(' ')
 
 export const formatDate = (isoDate) =>
-  new Date(isoDate).toLocaleDateString('es-ES')
+  isoDate ? new Date(isoDate).toLocaleDateString('es-ES') : ''
 
 export const formatNumber = (value) =>
   new Intl.NumberFormat('es-ES').format(Number(value))

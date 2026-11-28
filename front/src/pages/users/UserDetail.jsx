@@ -13,9 +13,11 @@ import {
   Typography,
 } from '@mui/material'
 import ArrowBack from '@mui/icons-material/ArrowBack'
+import EditOutlined from '@mui/icons-material/EditOutlined'
 import PersonOffOutlined from '@mui/icons-material/PersonOffOutlined'
 import { getUserById } from '../../api/usersApi'
 import EmptyState from '../../components/EmptyState/EmptyState'
+import ShareholderForm from '../../components/ShareholderForm/ShareholderForm'
 import {
   PERSON_TYPE_LABELS,
   ROLE_LABELS,
@@ -56,6 +58,7 @@ function BackButton() {
 function UserDetail() {
   const { userId } = useParams()
   const [result, setResult] = useState({ userId: null, user: null, errorStatus: null })
+  const [isEditingShareholder, setIsEditingShareholder] = useState(false)
 
   useEffect(() => {
     let ignore = false
@@ -99,13 +102,18 @@ function UserDetail() {
       <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
         <BackButton />
         <Alert severity="error">
-          No se ha podido cargar el usuario. Inténtalo de nuevo.
+          No se ha podido cargar el usuario. Inténtelo de nuevo más tarde.
         </Alert>
       </Container>
     )
   }
 
   const { shareholder } = user
+
+  const handleShareholderChange = (updatedShareholder) => {
+    setResult((current) => ({ ...current, user: { ...current.user, shareholder: updatedShareholder } }))
+    setIsEditingShareholder(false)
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
@@ -139,27 +147,50 @@ function UserDetail() {
 
           <Divider />
 
-          <Box>
-            <Typography variant="h3" component="h2" sx={{ mb: 2 }}>
-              Ficha de accionista
-            </Typography>
-            {shareholder ? (
-              <Box sx={FIELDS_GRID_SX}>
-                <Field label="Acciones" value={formatNumber(shareholder.shares_count)} />
-                <Field
-                  label="Porcentaje de capital"
-                  value={formatPercentage(shareholder.shares_percentage)}
-                />
-                <Field label="Capital social" value={formatCurrency(shareholder.share_capital)} />
-                <Field label="Representante" value={shareholder.representative_name} />
-                <Field label="NIF del representante" value={shareholder.representative_tax_id} />
-              </Box>
-            ) : (
-              <Typography color="text.secondary">
-                Este usuario no tiene ficha de accionista.
-              </Typography>
-            )}
-          </Box>
+          {isEditingShareholder ? (
+            <ShareholderForm
+              userId={user.id}
+              shareholder={shareholder}
+              showForm
+              onCancel={() => setIsEditingShareholder(false)}
+              onShareholderChange={handleShareholderChange}
+            />
+          ) : (
+            <Box>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ mb: 2, alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <Typography variant="h3" component="h2">
+                  Ficha de accionista
+                </Typography>
+                <Button
+                  variant="outlined"
+                  startIcon={<EditOutlined />}
+                  onClick={() => setIsEditingShareholder(true)}
+                >
+                  {shareholder ? 'Editar ficha' : 'Añadir ficha'}
+                </Button>
+              </Stack>
+              {shareholder ? (
+                <Box sx={FIELDS_GRID_SX}>
+                  <Field label="Acciones" value={formatNumber(shareholder.shares_count)} />
+                  <Field
+                    label="Porcentaje de capital"
+                    value={formatPercentage(shareholder.shares_percentage)}
+                  />
+                  <Field label="Capital social" value={formatCurrency(shareholder.share_capital)} />
+                  <Field label="Representante" value={shareholder.representative_name} />
+                  <Field label="NIF del representante" value={shareholder.representative_tax_id} />
+                </Box>
+              ) : (
+                <Typography color="text.secondary">
+                  Este usuario no tiene ficha de accionista.
+                </Typography>
+              )}
+            </Box>
+          )}
         </Stack>
       </Paper>
     </Container>

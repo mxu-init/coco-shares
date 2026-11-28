@@ -137,7 +137,7 @@ function Users() {
 
       {result.failed && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          No se ha podido cargar el listado de usuarios. Inténtalo de nuevo.
+          No se ha podido cargar el listado de usuarios. Inténtelo de nuevo más tarde.
         </Alert>
       )}
 
