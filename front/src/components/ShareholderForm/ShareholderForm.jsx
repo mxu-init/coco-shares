@@ -66,8 +66,8 @@ function DeleteShareholderDialog({ isOpen, isDeleting, onCancel, onConfirm }) {
   )
 }
 
-function ShareholderForm({ userId, shareholder, onShareholderChange }) {
-  const [isFormOpen, setIsFormOpen] = useState(Boolean(shareholder))
+function ShareholderForm({ userId, shareholder, onShareholderChange, showForm = false, onCancel }) {
+  const [isFormOpen, setIsFormOpen] = useState(showForm || Boolean(shareholder))
   const [formValues, setFormValues] = useState(shareholder ? toFormValues(shareholder) : EMPTY_FORM)
   const [fieldErrors, setFieldErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
@@ -173,6 +173,11 @@ function ShareholderForm({ userId, shareholder, onShareholderChange }) {
                   sx={{ minHeight: 48 }}
                 >
                   Eliminar ficha
+                </Button>
+              )}
+              {onCancel && (
+                <Button variant="text" disabled={isSubmitting} onClick={onCancel} sx={{ minHeight: 48 }}>
+                  Cancelar
                 </Button>
               )}
             </Stack>
