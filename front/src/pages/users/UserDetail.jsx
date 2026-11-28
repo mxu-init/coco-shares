@@ -102,7 +102,7 @@ function UserDetail() {
       <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
         <BackButton />
         <Alert severity="error">
-          No se ha podido cargar el usuario. Inténtalo de nuevo.
+          No se ha podido cargar el usuario. Inténtelo de nuevo más tarde.
         </Alert>
       </Container>
     )

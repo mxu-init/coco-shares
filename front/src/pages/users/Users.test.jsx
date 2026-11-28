@@ -143,7 +143,7 @@ describe('Users', () => {
       renderUsers()
       await screen.findByText('Nombre1 Apellido1')
 
-      chooseOption(ROLE_SELECT, 'Gestor')
+      chooseOption(ROLE_SELECT, 'Manager')
       await expectLastRequest({ page: 1, size: 10, role: 'manager' })
       chooseOption(STATUS_SELECT, 'Inactivos')
 

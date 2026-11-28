@@ -12,7 +12,7 @@ import Shareholders from './pages/shareholders/Shareholders'
 import Users from './pages/users/Users'
 import UserDetail from './pages/users/UserDetail'
 import NewUser from './pages/users/NewUser'
-import { ADMIN_ROLES, ALL_ROLES, MANAGEMENT_ROLES } from './userRoles'
+import { ADMIN_ROLES, ALL_ROLES } from './userRoles'
 
 function App() {
   const { currentUser, isLoadingUser } = useCurrentUser()
@@ -40,7 +40,7 @@ function App() {
         </Route>
         <Route
           element={
-            <ProtectedRoute currentUser={currentUser} isLoadingUser={isLoadingUser} allowedRoles={MANAGEMENT_ROLES} />
+            <ProtectedRoute currentUser={currentUser} isLoadingUser={isLoadingUser} allowedRoles={ADMIN_ROLES} />
           }
         >
           <Route path="/management/users" element={<Users />} />
