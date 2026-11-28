@@ -9,8 +9,10 @@ import Login from './pages/login/Login'
 import AccessDenied from './pages/accessdenied/AccessDenied'
 import NotFound from './pages/notfound/NotFound'
 import Shareholders from './pages/shareholders/Shareholders'
+import Users from './pages/users/Users'
+import UserDetail from './pages/users/UserDetail'
 import NewUser from './pages/users/NewUser'
-import { ADMIN_ROLES, ALL_ROLES } from './userRoles'
+import { ADMIN_ROLES, ALL_ROLES, MANAGEMENT_ROLES } from './userRoles'
 
 function App() {
   const { currentUser, isLoadingUser } = useCurrentUser()
@@ -35,6 +37,14 @@ function App() {
           }
         >
           <Route path="/users/new" element={<NewUser />} />
+        </Route>
+        <Route
+          element={
+            <ProtectedRoute currentUser={currentUser} isLoadingUser={isLoadingUser} allowedRoles={MANAGEMENT_ROLES} />
+          }
+        >
+          <Route path="/management/users" element={<Users />} />
+          <Route path="/management/users/:userId" element={<UserDetail />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
